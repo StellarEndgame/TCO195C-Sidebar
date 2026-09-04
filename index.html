@@ -1685,13 +1685,407 @@ audio{
 
 }
 
+<style>
+
+/* =========================================================
+   ⚔️ CHESS.COM WORLD WAR
+   🖤 BLACK + 🔵 DEEP BLUE WAR BACKGROUND
+   ========================================================= */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    background: #01030a !important;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* 🖤 BLACK / NAVY BASE */
+body {
+    position: relative;
+
+    background:
+        radial-gradient(
+            ellipse at 50% 45%,
+            #06152e 0%,
+            #030b1b 35%,
+            #01030a 72%,
+            #000000 100%
+        ) !important;
+}
+
+
+/* 🔵 DEEP BLUE WAR ATMOSPHERE */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+        radial-gradient(
+            circle at 15% 25%,
+            rgba(0, 70, 255, 0.20),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 85% 75%,
+            rgba(0, 110, 255, 0.18),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 40, 120, 0.16),
+            transparent 45%
+        );
+
+    animation: blueWarGlow 10s ease-in-out infinite alternate;
+}
+
+
+/* ♟️ DARK CHESS PIECES */
+
+body::after {
+    content:
+        "♟     ♞       ♜          ♝       ♛        ♚       ♜          ♞     ♟";
+
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: rgba(30, 100, 220, 0.055);
+
+    font-size: 55px;
+    letter-spacing: 18px;
+    white-space: nowrap;
+
+    transform: rotate(-8deg) scale(1.5);
+
+    animation: piecesMove 18s ease-in-out infinite alternate;
+}
+
+
+/* ⚔️ WAR BATTLEFIELD */
+
+.chess-war-background {
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 0;
+
+    background:
+
+        /* diagonal blue sword */
+        linear-gradient(
+            45deg,
+            transparent 47%,
+            rgba(0, 100, 255, 0.035) 48%,
+            rgba(0, 130, 255, 0.11) 49%,
+            rgba(0, 100, 255, 0.035) 50%,
+            transparent 51%
+        ),
+
+        /* opposite sword */
+        linear-gradient(
+            -45deg,
+            transparent 47%,
+            rgba(0, 100, 255, 0.035) 48%,
+            rgba(0, 130, 255, 0.11) 49%,
+            rgba(0, 100, 255, 0.035) 50%,
+            transparent 51%
+        );
+
+    opacity: 0.8;
+
+    animation: swordsPulse 6s ease-in-out infinite alternate;
+}
+
+
+/* ♟️ BLUE CHESSBOARD GRID */
+
+.chessboard-glow {
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 0;
+
+    background-image:
+        linear-gradient(
+            rgba(20, 90, 180, 0.055) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(20, 90, 180, 0.055) 1px,
+            transparent 1px
+        );
+
+    background-size: 45px 45px;
+
+    opacity: 0.7;
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 10%,
+            transparent 75%
+        );
+
+    animation: boardMove 30s linear infinite;
+}
+
+
+/* ⭐ BLUE PARTICLES */
+
+.war-stars {
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+    z-index: 1;
+
+    background-image:
+        radial-gradient(
+            circle,
+            rgba(50, 150, 255, 0.75) 1px,
+            transparent 1.5px
+        );
+
+    background-size: 90px 90px;
+
+    opacity: 0.35;
+
+    animation: starsMove 18s linear infinite;
+}
+
+
+/* 🔵 MOVING BLUE LIGHT */
+
+.war-glow {
+    position: fixed;
+
+    width: 350px;
+    height: 350px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+    z-index: 0;
+
+    background: rgba(0, 80, 255, 0.10);
+
+    filter: blur(100px);
+
+    animation: glowMove 16s ease-in-out infinite alternate;
+}
+
+
+/* =========================================================
+   🎬 ANIMATIONS
+   ========================================================= */
+
+@keyframes blueWarGlow {
+
+    0% {
+        transform: scale(1);
+        opacity: 0.75;
+    }
+
+    50% {
+        transform: scale(1.04);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.08);
+        opacity: 0.8;
+    }
+}
+
+
+@keyframes piecesMove {
+
+    0% {
+        transform:
+            rotate(-8deg)
+            translateX(-30px)
+            scale(1.5);
+    }
+
+    100% {
+        transform:
+            rotate(-5deg)
+            translateX(30px)
+            scale(1.55);
+    }
+}
+
+
+@keyframes swordsPulse {
+
+    0% {
+        opacity: 0.35;
+    }
+
+    100% {
+        opacity: 0.85;
+    }
+}
+
+
+@keyframes boardMove {
+
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 45px 45px;
+    }
+}
+
+
+@keyframes starsMove {
+
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 90px 90px;
+    }
+}
+
+
+@keyframes glowMove {
+
+    0% {
+        left: -180px;
+        top: 5%;
+    }
+
+    50% {
+        left: 45%;
+        top: 55%;
+    }
+
+    100% {
+        left: 80%;
+        top: 15%;
+    }
+}
+
+
+/* Keep your actual content above the background */
+
+.club-box,
+section,
+main,
+header,
+.content {
+    position: relative;
+    z-index: 2;
+}
+
+/* 🔴 LIVE BADGE — TOP RIGHT OF CLUB BOX */
+
+.club-live {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 5px 9px;
+    border-radius: 20px;
+
+    background: rgba(255, 25, 45, 0.10);
+    border: 1px solid rgba(255, 55, 70, 0.45);
+
+    color: #ff5363;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+
+    box-shadow:
+        0 0 10px rgba(255, 30, 50, 0.25);
+
+    z-index: 10;
+}
+
+.club-live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+
+    background: #ff3045;
+
+    box-shadow:
+        0 0 6px #ff3045,
+        0 0 12px rgba(255, 30, 50, 0.7);
+
+    animation: clubLiveBlink 1.1s ease-in-out infinite;
+}
+
+@keyframes clubLiveBlink {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow:
+            0 0 6px #ff3045,
+            0 0 12px rgba(255, 30, 50, 0.7);
+    }
+
+    50% {
+        opacity: 0.25;
+        transform: scale(0.65);
+        box-shadow:
+            0 0 2px #ff3045;
+    }
+}
+  
 </style>
 
+
+<!-- ⚔️ WORLD WAR BACKGROUND -->
+
+<div class="chess-war-background"></div>
+<div class="chessboard-glow"></div>
+<div class="war-stars"></div>
+<div class="war-glow"></div>
+
+</style>
+
+<!-- Background layers -->
+<div class="blue-atmosphere"></div>
+<div class="chessboard-glow"></div>
+<div class="chess-war-background"></div>
+
+  
 </head>
 
 
 <body>
 
+<!-- Background layers -->
+<div class="blue-atmosphere"></div>
+<div class="chessboard-glow"></div>
+<div class="chess-war-background"></div>
 
 <!-- =========================================================
      🌠 STARS
@@ -1731,7 +2125,10 @@ audio{
      ========================================================= -->
 
 <div class="club-box globe-header">
-
+<div class="club-live">
+    <span class="club-live-dot"></span>
+    LIVE
+</div>
     <div class="earth">
         🌍
     </div>
@@ -1762,41 +2159,28 @@ audio{
 
 </div>
 
-
 <!-- =========================================================
-     ⚡ LIVE ACTIVITY
+     ✨ QUOTE
      ========================================================= -->
 
 <div class="club-box">
 
-    <h3 class="section-title">
-        ⚡ LIVE ACTIVITY
-    </h3>
+    <p
+        class="center"
+        style="
+            margin:0;
+            color:#cdd9ff;
+            font-size:11px;
+            line-height:1.6;
+            font-style:italic;
+        "
+    >
 
-    <div class="live-wrap">
+        "Uniting players from every corner of the world."
 
-        <div class="live-dot"></div>
-
-        <div class="live-text">
-            LIVE NOW
-        </div>
-
-    </div>
-
-    <div class="activity">
-
-        <div class="activity-number">
-            24/7
-        </div>
-
-        <div class="activity-label">
-            ACTIVE COMMUNITY
-        </div>
-
-    </div>
+    </p>
 
 </div>
-
 
 <!-- =========================================================
      ⚔️ CHESS.COM WORLD WAR
@@ -2084,28 +2468,7 @@ audio{
 </div>
 
 
-<!-- =========================================================
-     ✨ QUOTE
-     ========================================================= -->
 
-<div class="club-box">
-
-    <p
-        class="center"
-        style="
-            margin:0;
-            color:#cdd9ff;
-            font-size:11px;
-            line-height:1.6;
-            font-style:italic;
-        "
-    >
-
-        "Uniting players from every corner of the world."
-
-    </p>
-
-</div>
 
 
 <!-- =========================================================
