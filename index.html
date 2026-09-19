@@ -915,6 +915,106 @@ hr{
 
 
 /* =========================================================
+   🔴 LIVE NOW STATE
+   ========================================================= */
+
+.cww-live{
+
+    display:none;
+
+    text-align:center;
+
+    margin:4px 0 12px;
+
+    padding:10px 8px;
+
+    border-radius:10px;
+
+    border:1px solid rgba(255,70,80,.65);
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(255,50,65,.22),
+            rgba(35,8,18,.85)
+        );
+
+    color:#ff6672;
+
+    font-size:19px;
+
+    font-weight:1000;
+
+    letter-spacing:1.5px;
+
+    text-shadow:
+        0 0 8px #ff4d5a,
+        0 0 18px rgba(255,50,70,.8),
+        0 0 30px rgba(255,50,70,.45);
+
+    box-shadow:
+        0 0 14px rgba(255,60,70,.35),
+        inset 0 0 18px rgba(255,50,70,.1);
+
+    animation:
+        cwwLivePulse 1.4s ease-in-out infinite alternate;
+}
+
+.cww-live-dot{
+
+    display:inline-block;
+
+    width:8px;
+    height:8px;
+
+    margin-right:6px;
+
+    border-radius:50%;
+
+    background:#ff4757;
+
+    box-shadow:
+        0 0 7px #ff4757,
+        0 0 16px rgba(255,60,70,.9);
+
+    animation:
+        cwwLiveDot 1s ease-in-out infinite;
+}
+
+@keyframes cwwLivePulse{
+
+    from{
+        transform:scale(1);
+        box-shadow:
+            0 0 14px rgba(255,60,70,.35),
+            inset 0 0 18px rgba(255,50,70,.1);
+    }
+
+    to{
+        transform:scale(1.025);
+        box-shadow:
+            0 0 25px rgba(255,60,70,.65),
+            inset 0 0 25px rgba(255,50,70,.18);
+    }
+
+}
+
+@keyframes cwwLiveDot{
+
+    0%,100%{
+        opacity:1;
+        transform:scale(1);
+    }
+
+    50%{
+        opacity:.45;
+        transform:scale(.75);
+    }
+
+}
+
+
+/* =========================================================
    🔢 ROLLING TIMER
    ========================================================= */
 
@@ -2743,110 +2843,164 @@ header,
    Every Saturday at 13:00 UTC
    = 18:30 IST
 
-   Automatically calculates the next World War.
+   CYCLE:
+   1. Countdown to Saturday 13:00 UTC
+   2. LIVE NOW! for exactly 24 hours
+   3. Countdown to the following Saturday
    ========================================================= */
 
 const CWW_UTC_HOUR = 13;
-
 const CWW_UTC_MINUTE = 0;
-
 const CWW_ROW_HEIGHT = 31;
+const CWW_LIVE_DURATION = 24 * 60 * 60 * 1000;
 
 
 /* =========================================================
-   🌍 FIND NEXT WORLD WAR
+   🌍 CREATE LIVE DISPLAY
    ========================================================= */
 
-function getNextWorldWar(){
+function createCwwLiveDisplay(){
 
-    const now = new Date();
+    const timer =
+        document.getElementById("cwwTimer");
+
+    if(!timer)
+        return null;
+
+    let live =
+        document.getElementById("cwwLive");
+
+    if(!live){
+
+        live =
+            document.createElement("div");
+
+        live.id = "cwwLive";
+        live.className = "cww-live";
+
+        live.innerHTML =
+            '<span class="cww-live-dot"></span>' +
+            'LIVE NOW!';
+
+        timer.parentNode.insertBefore(
+            live,
+            timer
+        );
+
+    }
+
+    return live;
+}
 
 
-    const target = new Date(
+/* =========================================================
+   📅 GET SATURDAY 13:00 UTC
+   ========================================================= */
+
+function getWorldWarForDate(date){
+
+    return new Date(
 
         Date.UTC(
 
-            now.getUTCFullYear(),
-
-            now.getUTCMonth(),
-
-            now.getUTCDate(),
-
+            date.getUTCFullYear(),
+            date.getUTCMonth(),
+            date.getUTCDate(),
             CWW_UTC_HOUR,
-
             CWW_UTC_MINUTE,
-
+            0,
             0
 
         )
 
     );
 
+}
+
+
+/* =========================================================
+   🌍 GET CURRENT / PREVIOUS WORLD WAR
+   ========================================================= */
+
+function getCurrentWorldWar(){
+
+    const now =
+        new Date();
+
+    const todayTarget =
+        getWorldWarForDate(now);
 
     /*
-       JavaScript:
-       Sunday = 0
-       Monday = 1
-       ...
        Saturday = 6
+
+       Find the most recent Saturday
+       at 13:00 UTC.
     */
 
-    let daysUntilSaturday =
-        (6 - now.getUTCDay() + 7) % 7;
-
+    let daysSinceSaturday =
+        (now.getUTCDay() - 6 + 7) % 7;
 
     /*
-       If today's World War has already
-       started, move to next Saturday.
+       If today is Saturday but it is
+       before 13:00 UTC, use last Saturday.
     */
 
     if(
 
-        daysUntilSaturday === 0 &&
-
-        now.getTime() >= target.getTime()
+        daysSinceSaturday === 0 &&
+        now.getTime() < todayTarget.getTime()
 
     ){
 
-        daysUntilSaturday = 7;
+        daysSinceSaturday = 7;
 
     }
 
+    const current =
+        new Date(todayTarget);
 
-    target.setUTCDate(
-
-        target.getUTCDate()
-        +
-        daysUntilSaturday
-
+    current.setUTCDate(
+        current.getUTCDate() -
+        daysSinceSaturday
     );
 
-
-    return target;
+    return current;
 
 }
 
 
-let cwwTarget =
-    getNextWorldWar();
+/* =========================================================
+   ⏭️ GET NEXT WORLD WAR
+   ========================================================= */
+
+function getNextWorldWar(){
+
+    const current =
+        getCurrentWorldWar();
+
+    const next =
+        new Date(current);
+
+    next.setUTCDate(
+        next.getUTCDate() + 7
+    );
+
+    return next;
+
+}
 
 
 /* =========================================================
    🔢 ROLLING DIGITS
    ========================================================= */
 
-function updateCwwDigit(
-    id,
-    value
-){
+function updateCwwDigit(id,value){
 
     const reel =
         document.getElementById(id);
 
-
     if(!reel)
         return;
-
 
     reel.style.transform =
         "translateY(-" +
@@ -2860,42 +3014,148 @@ function updateCwwDigit(
 
 
 /* =========================================================
-   ⏱️ WORLD WAR COUNTDOWN
+   🔴 SHOW LIVE NOW
+   ========================================================= */
+
+function showCwwLive(){
+
+    const timer =
+        document.getElementById("cwwTimer");
+
+    const live =
+        createCwwLiveDisplay();
+
+    const status =
+        document.getElementById("cwwStatus");
+
+    if(timer)
+        timer.style.display = "none";
+
+    if(live)
+        live.style.display = "block";
+
+    if(status){
+
+        status.textContent =
+            "● WORLD WAR IS LIVE • ENDS IN 24 HOURS";
+
+        status.style.color =
+            "#ff6672";
+
+        status.style.textShadow =
+            "0 0 8px rgba(255,70,80,.9)";
+
+    }
+
+}
+
+
+/* =========================================================
+   ⏱️ SHOW COUNTDOWN
+   ========================================================= */
+
+function showCwwCountdown(){
+
+    const timer =
+        document.getElementById("cwwTimer");
+
+    const live =
+        createCwwLiveDisplay();
+
+    const status =
+        document.getElementById("cwwStatus");
+
+    if(timer)
+        timer.style.display = "flex";
+
+    if(live)
+        live.style.display = "none";
+
+    if(status){
+
+        status.textContent =
+            "● NEXT WORLD WAR • SATURDAY • 13:00 UTC";
+
+        status.style.color =
+            "#73b7ff";
+
+        status.style.textShadow =
+            "0 0 8px rgba(80,150,255,.7)";
+
+    }
+
+}
+
+
+/* =========================================================
+   ⚔️ MAIN WORLD WAR UPDATE
    ========================================================= */
 
 function updateWorldWar(){
 
     const now =
-        new Date().getTime();
+        Date.now();
 
+    const currentWorldWar =
+        getCurrentWorldWar();
 
-    let diff =
-        cwwTarget.getTime()
-        -
-        now;
+    const nextWorldWar =
+        new Date(currentWorldWar);
+
+    nextWorldWar.setUTCDate(
+        nextWorldWar.getUTCDate() + 7
+    );
+
+    const liveStart =
+        currentWorldWar.getTime();
+
+    const liveEnd =
+        liveStart +
+        CWW_LIVE_DURATION;
 
 
     /*
-       Event time reached.
-       Calculate the next edition.
+       🔴 LIVE WINDOW
+
+       Saturday 13:00 UTC
+       →
+       Sunday 13:00 UTC
     */
 
-    if(diff <= 0){
+    if(
+        now >= liveStart &&
+        now < liveEnd
+    ){
 
-        cwwTarget =
-            getNextWorldWar();
+        showCwwLive();
 
-        diff =
-            cwwTarget.getTime()
-            -
-            now;
+        return;
 
     }
 
 
+    /*
+       ⏳ COUNTDOWN WINDOW
+
+       Sunday 13:00 UTC
+       →
+       Saturday 13:00 UTC
+    */
+
+    showCwwCountdown();
+
+
+    let diff =
+        nextWorldWar.getTime() -
+        now;
+
+
+    if(diff < 0)
+        diff = 0;
+
+
     const days =
         Math.floor(
-
             diff /
             (
                 1000 *
@@ -2903,7 +3163,6 @@ function updateWorldWar(){
                 60 *
                 24
             )
-
         );
 
 
@@ -2965,7 +3224,9 @@ function updateWorldWar(){
         );
 
 
-    /* Keep two-digit days */
+    /*
+       Keep days at two digits.
+    */
 
     const displayDays =
         Math.min(days,99);
@@ -3030,17 +3291,14 @@ function updateWorldWar(){
         seconds % 10
     );
 
-
-    document.getElementById(
-        "cwwStatus"
-    ).textContent =
-        "● NEXT WORLD WAR • SATURDAY • 13:00 UTC";
-
 }
 
 
-updateWorldWar();
+/* =========================================================
+   🚀 START TIMER
+   ========================================================= */
 
+updateWorldWar();
 
 setInterval(
     updateWorldWar,
